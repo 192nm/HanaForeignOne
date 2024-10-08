@@ -1,0 +1,157 @@
+
+.authentication-container {
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  padding: 30px;
+  margin-top: 30px;
+  max-width: 600px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.info-section {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #555;
+  flex: 0.3;
+  font-size: 14px;
+}
+
+.info-value-wrapper {
+  flex: 0.7;
+  display: flex;
+  align-items: center;
+}
+
+.info-value {
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 4px;
+  color: #333;
+  flex-grow: 1;
+  text-align: left;
+  font-size: 14px;
+}
+
+.editable {
+  width: 80%;
+}
+
+.verification-status {
+  background-color: #fff;
+  color: #009793;
+  border: 1px solid #009793;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.verification-status:hover {
+  background-color: #009793;
+  color: white;
+}
+
+.btn-edit {
+  background-color: #fff;
+  border: 1px solid #009793;
+  color: #009793;
+  cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-left: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-edit:hover {
+  background-color: #009793;
+  color: white;
+}
+
+.address-search {
+  background-color: #fff;
+  color: #009793;
+  border: 1px solid #009793;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 14px;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.address-search:hover {
+  background-color: #009793;
+  color: white;
+}
+
+.address-input {
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+  margin-top: 5px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.proceed-button {
+  background-color: #fff;
+  color: #009793;
+  padding: 15px 30px;
+  border: 1px solid #009793;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.proceed-button:hover {
+  background-color: #009793;
+  color: white;
+}

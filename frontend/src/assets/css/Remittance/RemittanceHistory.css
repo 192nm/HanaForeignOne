@@ -1,0 +1,69 @@
+.remittance-history-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+  }
+  
+  .remittance-history-filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .remittance-history-filters input[type="date"],
+  .remittance-history-filters input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .remittance-history-filters button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .remittance-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .remittance-history-table th,
+  .remittance-history-table td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .remittance-recipient-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .remittance-recipient-info img {
+    width: 30px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  
+  .remittance-history-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .remittance-history-pagination button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  

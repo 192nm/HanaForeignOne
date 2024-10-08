@@ -1,0 +1,27 @@
+.company-container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .date-picker,
+  .currency-picker {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  input[type="date"],
+  select {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  p {
+    font-size: 18px;
+    color: #009793;
+  }
+  

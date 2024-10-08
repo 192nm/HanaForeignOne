@@ -1,0 +1,72 @@
+.remittance-done-container {
+    max-width: 600px; /* 컨테이너의 최대 너비 설정 */
+    margin: 0 auto; /* 컨테이너를 가운데 정렬 */
+    padding: 20px; /* 컨테이너 안쪽 여백 추가 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    background-color: #fff; /* 배경색 설정 */
+    border-radius: 10px; /* 둥근 모서리 설정 */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+}
+
+.remittance-done-icon {
+    width: 60px;
+    margin-bottom: 20px;
+}
+
+.remittance-done-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007BFF; /* 타이틀 색상 변경 */
+    margin-bottom: 20px;
+}
+
+.remittance-done-info {
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.remittance-done-info span {
+    display: inline-block;
+    width: 100px; /* 항목의 고정 너비 설정 */
+    font-weight: bold;
+}
+
+.remittance-done-info div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.remittance-done-notice {
+    text-align: left;
+    font-size: 14px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #F8F9FA;
+    border-left: 4px solid #28A745; /* 안내문 왼쪽에 강조선 추가 */
+    line-height: 1.6;
+}
+
+.remittance-done-notice p {
+    margin: 10px 0;
+}
+
+.remittance-done-buttons {
+    display: flex;
+    justify-content: space-around; /* 버튼을 양쪽에 배치 */
+    margin-top: 30px;
+}
+
+.remittance-done-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+}
+
+.remittance-done-buttons button:hover {
+    background-color: #0056b3; /* 버튼 호버 시 색상 변경 */
+}

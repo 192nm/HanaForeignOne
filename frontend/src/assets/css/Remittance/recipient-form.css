@@ -1,0 +1,56 @@
+.recipient-form {
+    text-align: left;
+}
+
+.recipient-form-row {
+    margin-bottom: 15px;
+}
+
+.recipient-form-name,
+.recipient-form-address,
+.recipient-form-contact {
+    display: flex;
+    gap: 10px;
+}
+
+.recipient-form-row label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.recipient-form input,
+.recipient-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.recipient-form-account-type label {
+    margin-right: 10px;
+}
+
+.recipient-form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.recipient-form-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.recipient-form-buttons button:first-of-type {
+    background-color: #cccccc;
+    color: #333;
+}
+
+.recipient-form-buttons button:last-of-type {
+    background-color: #0070f3;
+    color: white;
+}

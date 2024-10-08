@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 수정된 헤더 CSS */
+#header {
+  background-color: #ffffff;
+  border-bottom: 2px solid #00a9e0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header__upper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 14px; /* 상단 텍스트 크기 조정 */
+  color: #666666; /* 상단 텍스트 색상 조정 */
+}
+
+.header__upper--left ul,
+.header__upper--right ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.header__upper--left li,
+.header__upper--right li {
+  margin-right: 15px;
+}
+
+.header__upper--left li:last-child,
+.header__upper--right li:last-child {
+  margin-right: 0;
+}
+
+.header__upper--right .language {
+  position: relative;
+}
+
+.header__upper--right .language ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  list-style: none;
+  margin: 0;
+}
+
+.header__upper--right .language:hover ul {
+  display: block;
+}
+
+.header__lower {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0; /* 메뉴바의 높이를 줄이기 위해 패딩 조정 */
+  width: 100%;
+}
+
+.header__lower .logo {
+  margin: 0;
+}
+
+.header__lower .logo img {
+  max-height: 30px; /* 로고의 크기를 적절히 조정 */
+}
+
+#gnbStart {
+  flex-grow: 1;
+  margin-left: 20px;
+}
+
+.gnb ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gnb li {
+  margin-right: 20px;
+  position: relative;
+}
+
+.gnb li a {
+  text-decoration: none;
+  color: #333;
+  padding: 10px 0;
+  display: block;
+  font-size: 16px; /* 메뉴 텍스트 크기 */
+}
+
+.gnb li.active a {
+  font-weight: bold;
+  color: #00a9e0; /* 활성화된 메뉴의 색상 */
+  border-bottom: 2px solid #00a9e0;
+}
+
+.submenu--bg {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  display: none;
+  z-index: 10;
+}
+
+.gnb li:hover .submenu--bg {
+  display: block;
+}
+
+.right_area {
+  display: flex;
+  align-items: center;
+}
+
+.haitalk_btn,
+.mymenu_btn,
+.search_btn {
+  margin-left: 20px;
+  position: relative;
+}
+
+.haitalk_btn span,
+.mymenu_btn span,
+.search_btn span {
+  cursor: pointer;
+  color: #0070f3;
+}
+
+.mymenu_btn .mymenuwrap {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.mymenu_btn:hover .mymenuwrap {
+  display: block;
+}
+
+.search_area {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 300px;
+}
+
+.search_btn:hover .search_area {
+  display: block;
+}

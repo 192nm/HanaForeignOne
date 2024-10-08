@@ -1,0 +1,221 @@
+.id-auth-container-custom {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+.id-auth-title {
+    margin-top: 80px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.id-auth-progress-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+.id-auth-step {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: #999;
+    border-bottom: 4px solid #eee;
+}
+
+.id-auth-step.active {
+    color: #009793;
+    border-color: #009793;
+}
+
+.id-auth-info-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.id-auth-info-row {
+    display: flex;
+    justify-content: center; /* 중앙 정렬로 변경 */
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e5e5;
+    flex-wrap: nowrap;
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.id-auth-info-label {
+    font-weight: bold;
+    color: #555;
+    flex: 0 0 20%;
+    font-size: 14px;
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+.id-auth-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+}
+
+.id-auth-separator {
+    padding: 0 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.id-auth-file-upload {
+    background-color: #009793;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block;
+    text-align: center;
+}
+
+.id-auth-file-upload:hover {
+    background-color: #009793;
+}
+
+.id-auth-file-info {
+    margin-left: 20px;
+    color: #555;
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+.id-auth-button-group {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.id-auth-btn-prev,
+.id-auth-btn-next {
+    background-color: white;
+    color: #009793;
+    padding: 12px 24px;
+    border: 2px solid #009793;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 48%;
+    transition: all 0.3s ease;
+}
+
+.id-auth-btn-prev:hover,
+.id-auth-btn-next:hover {
+    background-color: #009793;
+    color: white;
+}
+
+.id-auth-note {
+    color: #777;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.id-auth-name-section,
+.id-auth-id-number-section,
+.id-auth-file-upload-wrapper,
+.id-auth-radio-wrapper,
+.id-auth-account-number-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center; /* 중앙 정렬로 변경 */
+}
+
+.id-auth-radio-wrapper {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center; /* 중앙 정렬로 변경 */
+}
+
+.id-auth-file-upload-wrapper {
+    justify-content: center; /* 중앙 정렬로 변경 */
+}
+
+.id-auth-note {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+    line-height: 1.6;
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+/* Image Preview */
+#preview {
+    max-width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
+/* Modal styles */
+.id-auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.id-auth-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease;
+}
+
+.id-auth-modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.id-auth-modal-close-btn {
+    background-color: #009793;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.id-auth-modal-close-btn:hover {
+    background-color: #009793;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

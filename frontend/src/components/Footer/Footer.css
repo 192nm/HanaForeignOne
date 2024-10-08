@@ -1,0 +1,65 @@
+.footer-container {
+  padding: 40px 20px;
+  background-color: #f8f8f8;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4; /* 줄 간격을 줄임 */
+  border-top: 1px solid #e0e0e0;
+}
+
+.footer-links-sections {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px; /* 섹션 간 간격을 줄임 */
+  text-align: left;
+}
+
+.footer-column {
+  width: 22%;
+}
+
+.footer-column h4 {
+  font-weight: bold;
+  margin-bottom: 8px; /* 제목과 리스트 간의 간격을 줄임 */
+  font-size: 16px;
+  color: #333;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 8px; /* 리스트 항목 간의 간격을 줄임 */
+}
+
+.footer-column ul li a {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-column ul li a:hover {
+  color: #009793;
+}
+
+.footer-divider {
+  border: 0;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 15px 0; /* 구분선 위아래 간격을 줄임 */
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4; /* 줄 간격을 줄임 */
+}
+
+.footer-bottom p {
+  color : #999;
+  margin: 4px 0; /* 텍스트 간의 간격을 줄임 */
+}

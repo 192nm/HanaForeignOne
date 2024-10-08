@@ -1,0 +1,60 @@
+.purpose-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.purpose-form h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.purpose-form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.purpose-form-row label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.purpose-form-row select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+.purpose-form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.purpose-form-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.purpose-form-buttons button[type="button"] {
+    background-color: #0070f3;
+    color: white;
+}
+
+.purpose-form-buttons button[type="submit"] {
+    background-color: #cccccc;
+    color: white;
+}

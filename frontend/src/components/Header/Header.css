@@ -1,0 +1,102 @@
+/* 헤더 스타일 */
+.header {
+  background-color: #ffffff;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative; /* 헤더를 화면 상단에 고정 */
+  top: 0;
+  left: 0;
+  z-index: 40;
+  height: 75px;
+}
+
+/* a 태그와 Link 컴포넌트의 기본 밑줄 제거 */
+.header a,
+.header .logo {
+  text-decoration: none;
+  color: inherit; /* 링크의 기본 색상을 상속 */
+}
+
+/* 마우스를 올렸을 때 색상을 바꿀 수 있는 스타일 */
+.header a:hover,
+.header .logo:hover,
+.nav-links li:hover a {
+  color: #009793; /* 파란색(#0071e3)을 청록색(#009793)으로 변경 */
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+  padding: 0 50px; /* '하나은행'과 '로그인|회원가입' 부분을 가운데로 약간 이동 */
+}
+
+.auth-links {
+  font-size: 12px;
+  color: #666;
+}
+
+.header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap; /* 헤더의 요소들이 화면 크기에 따라 자동으로 줄바꿈 */
+  padding: 0 50px; /* 로고와 로그인/회원가입 부분을 가운데로 약간 이동 */
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links li {
+  margin-right: 20px;
+  font-size: 16px;
+}
+
+/* 마이페이지 링크를 다른 링크들과 동일하게 만듦 */
+.nav-links li a {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-links li a:hover {
+  background-color: #f0f0f0;
+  color: #009793; /* 다른 링크들과 동일하게 hover 스타일 추가 */
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.auth-link {
+  color: #0070f3;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.header-actions a {
+  margin: 0 5px;
+  text-decoration: none;
+  color: inherit;
+}

@@ -1,0 +1,122 @@
+.join-success-container {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 40px 20px;
+    margin-top: 50px;
+    max-width: 80%;
+    max-height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    align-items: center;
+}
+
+.success-icon {
+    margin-bottom: 20px;
+}
+
+.success-icon img {
+    width: 100px;
+    height: 100px;
+}
+
+.success-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.success-title .highlight {
+    color: #009793;
+}
+
+.success-message {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.document-guide {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    max-width: 50%;
+    max-height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.document-guide h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.document-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.document-label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #333;
+}
+
+.document-info {
+    color: #666;
+}
+
+.details-link {
+    color: #009793;
+    text-decoration: none;
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.details-link:hover {
+    text-decoration: underline;
+}
+
+.btn-authenticate {
+    padding: 15px 30px;
+    background-color: #009793;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    text-decoration: none;
+}
+
+.btn-authenticate:hover {
+    background-color: #007b6e;
+}
+
+.contact-help {
+    font-size: 14px;
+    color: #666;
+    margin-top: 20px;
+}
+
+.contact-help a {
+    color: #009793;
+    text-decoration: none;
+}
+
+.contact-help a:hover {
+    text-decoration: underline;
+}

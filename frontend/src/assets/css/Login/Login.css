@@ -1,0 +1,131 @@
+/* 전체 컨테이너 설정 */
+.login-container {
+  display: flex;
+  justify-content: space-between; /* 좌우로 요소들을 배치 */
+  align-items: center;
+  padding: 50px;
+  background-color: #009793;
+  color: white;
+  text-align: left; /* 왼쪽에 있는 텍스트를 왼쪽 정렬 */
+}
+
+/* 왼쪽 텍스트 영역 스타일 */
+.login-left {
+  flex: 1;
+  padding-right: 50px; /* 오른쪽 박스와의 간격 */
+}
+
+.remittance-gif {
+  width: 100%; /* 이미지를 컨테이너에 맞게 조정 */
+  max-width: 900px; /* 이미지의 최대 너비 설정 */
+  margin-bottom: 20px; /* 이미지와 텍스트 사이에 간격 추가 */
+}
+
+.login-left-title {
+  font-size: 36px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 로그인 섹션 스타일 */
+.login-section {
+  margin-top: 60px;
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  height: 500px;
+}
+
+/* 로그인 제목 */
+.login-title {
+  font-size: 24px;
+  color: #004f7c;
+  margin-bottom: 20px;
+}
+
+/* 폼 그룹 설정 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* 라벨 스타일 */
+label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 인풋 필드 스타일 */
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 로그인 버튼 스타일 */
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #6e6e6e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* 로그인 버튼 호버 효과 */
+.login-button:hover {
+  background-color: #5a5a5a;
+}
+
+/* 로그인 푸터 스타일 */
+.login-footer {
+  margin-top: 50px;
+  text-align: center;
+}
+
+/* 비밀번호 찾기 링크 스타일 */
+.forgot-password {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 20px;
+  text-decoration: none;
+}
+
+/* 소셜 로그인 아이콘 스타일 */
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  text-decoration: none;
+}
+
+.social-icon.facebook {
+  background-color: #3b5998;
+}
+
+.social-icon.naver {
+  background-color: #2db400;
+}
+
+.social-icon.apple {
+  background-color: #000000;
+}

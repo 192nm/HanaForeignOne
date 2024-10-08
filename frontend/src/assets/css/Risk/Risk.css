@@ -1,0 +1,45 @@
+.risk-management-container {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+    min-height: calc(100vh - 160px); /* Header와 Footer 높이를 고려한 최소 높이 */
+  }
+  
+  .risk-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .risk-content h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .risk-table {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .risk-row {
+    background-color: #e0e0e0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .risk-row p {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .risk-row p + p {
+    margin-top: 10px;
+  }
+  

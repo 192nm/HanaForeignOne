@@ -1,0 +1,109 @@
+.expectRatio-page {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.expectRatio-container {
+  flex: 1;
+  padding: 15px;
+  /* max-width: 600px; */
+  width: 1000px;
+  /* margin: 0 auto; */
+  /* background-color: #ffffff; */
+  border-radius: 10px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+.expectRatio-wrapper {
+  display: flex;
+  gap: 20px;
+}
+.btn-wrapper {
+  display: flex;
+  gap: 20px;
+  
+}
+.flex-1 {
+  flex: 1;
+}
+
+
+.expectRatio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.expectRatio-input {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  font-size: 1rem;
+}
+
+.expectRatio-input label {
+  flex: 1;
+}
+
+.expectRatio-input select, 
+.expectRatio-input input {
+  flex: 2;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+
+
+.expectRatio-prediction-table, .expectRatio-real-time-rates-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.expectRatio-prediction-table th, 
+.expectRatio-prediction-table td, 
+.expectRatio-real-time-rates-table th, 
+.expectRatio-real-time-rates-table td {
+  /* border: 1px solid #ccc; */
+  padding: 10px;
+  text-align: center;
+}
+
+.expectRatio-real-time-rate-section {
+  /* margin-top: 25px; */
+  text-align: center;
+  padding: 12px;
+  /* border: 1px solid #ccc; */
+  border-radius: 8px;
+  /* background-color: #f9f9f9; */
+}
+
+.expectRatio-historical-data-section canvas {
+  max-width: 100%;
+  height: 400px;
+  margin: 0 auto;
+}
+
+
+.expectRatio-news-section ul, .expectRatio-favorites-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.expectRatio-news-section ul li, .expectRatio-favorites-section ul li {
+  margin-bottom: 8px;
+}
+
+.expectRatio-news-section ul li a {
+  text-decoration: none;
+  color: #1abc9c;
+  font-size: 1rem;
+}
+
+.expectRatio-news-section ul li a:hover {
+  text-decoration: underline;
+}
