@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.alert.mapper.AlertMapper">
+
+    <!-- 알림 등록 -->
+    <insert id="insertAlert" parameterType="ac.kr.kopo.kopo_remittance.domain.alert.dto.AlertDTO">
+        INSERT INTO RESERVATION_ALERT (alert_id, user_id, currency_code, target_rate, alert_condition)
+        VALUES (ALERT_SEQ.NEXTVAL, #{userId}, #{currencyCode}, #{targetRate}, #{alertCondition})
+    </insert>
+
+
+    <!-- 모든 알림 조회 -->
+    <select id="getAllAlerts" resultType="ac.kr.kopo.kopo_remittance.domain.alert.dto.AlertDTO">
+        SELECT alert_id AS alertId, user_id AS userId, currency_code AS currencyCode,
+               target_rate AS targetRate, alert_condition AS alertCondition
+        FROM RESERVATION_ALERT
+    </select>
+
+    <!-- 알림 삭제 -->
+    <delete id="deleteAlert" parameterType="Long">
+        DELETE FROM RESERVATION_ALERT WHERE alert_id = #{alertId}
+    </delete>
+
+    <!-- 사용자 이메일 조회 -->
+    <select id="getUserEmailById" parameterType="String" resultType="String">
+        SELECT email
+        FROM USERR
+        WHERE id = #{userId}
+    </select>
+
+    <!-- 현재 환율 조회 -->
+    <select id="getCurrentExchangeRate" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT standard_rate
+        FROM EXCHANGERATE
+        WHERE currency_code = #{currencyCode}
+    </select>
+
+</mapper>

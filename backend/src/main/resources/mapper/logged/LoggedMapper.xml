@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.logged.mapper.LoggedMapper">
+    <select id="fxLogById" parameterType="string" resultType="ac.kr.kopo.kopo_remittance.domain.logged.dto.FxLogDTO">
+        SELECT TRANSACTION_DATE, TRANSACTION_TYPE, CURRENCY_CODE, AMOUNT, AMOUNT_IN_KRW
+        FROM transaction_log
+        WHERE ID = #{id}
+          AND TRANSACTION_TYPE LIKE '%환전(%' ORDER BY TRANSACTION_DATE DESC
+    </select>
+
+    <select id="findRemittanceLogsById" parameterType="string" resultType="ac.kr.kopo.kopo_remittance.domain.logged.dto.RemiLogDTO">
+        SELECT t.TRANSACTION_DATE, t.TRANSACTION_TYPE, t.CURRENCY_CODE, t.AMOUNT, t.AMOUNT_IN_KRW, o.RECIPIENT_NAME
+        FROM transaction_log t
+                 JOIN overseasaccounts o ON t.RC_ACCOUNT = o.ACCOUNT_NUMBER
+        WHERE t.ID = #{id}
+          AND t.TRANSACTION_TYPE LIKE '%송금%' ORDER BY TRANSACTION_DATE DESC
+    </select>
+
+    <select id="accountHolderByNo" parameterType="string" resultType="string">
+        SELECT RECIPIENT_NAME FROM OVERSEASACCOUNT WHERE ACCOUNT_NUMBER = #{accountNo}
+    </select>
+
+    <select id="remiLogGet" parameterType="string" resultType="ac.kr.kopo.kopo_remittance.domain.logged.dto.RemiAllLog">
+        SELECT
+            t.TRANSACTION_DATE AS transactionDate,
+            t.CURRENCY_CODE AS currencyCode,
+            t.AMOUNT AS amount,
+            t.AMOUNT_IN_KRW AS amountInKrw,
+            o.RECIPIENT_NAME AS recipientName,
+            t.RC_ACCOUNT AS recipientAccount,
+            t.SD_ACCOUNT AS senderAccount,
+            t.TRAN_STATUS AS status,
+            u.NAME AS senderName
+        FROM
+            transaction_log t
+                JOIN
+            userr u ON t.ID = u.ID
+                JOIN
+            overseasaccounts o ON t.RC_ACCOUNT = o.ACCOUNT_NUMBER
+        WHERE
+            t.ID = #{id}
+          AND
+            t.TRANSACTION_TYPE = '송금'
+        ORDER BY
+            t.TRANSACTION_DATE DESC
+    </select>
+
+
+</mapper>

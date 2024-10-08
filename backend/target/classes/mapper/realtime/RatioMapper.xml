@@ -1,0 +1,31 @@
+<!-- src/main/resources/mapper/RealTimeMapper.xml -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.realtime.mapper.RealTimeMapper">
+
+    <select id="getExchangeRates" resultType="ac.kr.kopo.kopo_remittance.domain.realtime.dto.RealTimeDTO">
+        SELECT CURRENCY_NAME AS currencyName,
+               STANDARD_RATE AS standardRate,
+               CASH_BUY_RATE AS cashBuyRate,
+               CASH_SELL_RATE AS cashSellRate
+        FROM EXCHANGERATE
+        WHERE CURRENCY_CODE IN ('USD', 'EUR', 'JPY', 'CNY')
+    </select>
+
+    <select id="getAllExchangeRates" resultType="ac.kr.kopo.kopo_remittance.domain.realtime.dto.RealTimeAllCurrencyDTO">
+        SELECT
+            CURRENCY_CODE AS currencyCode,
+            CURRENCY_NAME AS currencyName,
+            STANDARD_RATE AS standardRate,
+            CASH_BUY_RATE AS cashBuyRate,
+            CASH_SELL_RATE AS cashSellRate,
+            SEND_BUY_RATE AS sendBuyRate,
+            RECEIVE_SELL_RATE AS receiveSellRate,
+            BUY_SPREAD AS buySpread,
+            SELL_SPREAD AS sellSpread
+        FROM EXCHANGERATE
+
+    </select>
+
+</mapper>

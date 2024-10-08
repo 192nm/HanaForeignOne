@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.wallet.mapper.WalletMapper">
+
+<insert id="insertWalletOk" parameterType="ac.kr.kopo.kopo_remittance.domain.wallet.dto.WalletOkInsertDTO">
+    INSERT INTO WALLETOK (ID, WALLETEXIST) VALUES (#{id}, #{walletExist})
+</insert>
+
+    <select id="walletOkExist" parameterType="String" resultType="Integer">
+        select COUNT(1) from WALLETOK where ID = #{id}
+    </select>
+
+    <select id="walletInfoById" resultType="ac.kr.kopo.kopo_remittance.domain.wallet.dto.WalletInfoByIdResponse" parameterType="java.lang.String">
+        SELECT
+            A.ACCOUNTNO AS accountNo,
+            A.KRW AS totalKrw,
+            A.USD AS totalUsd,
+            A.JPY AS totalJpy,
+            A.CNY AS totalCny,
+            A.EUR AS totalEur,
+            CASE
+                WHEN A.KRW > 0 THEN 'KRW'
+                WHEN A.USD > 0 THEN 'USD'
+                WHEN A.JPY > 0 THEN 'JPY'
+                WHEN A.CNY > 0 THEN 'CNY'
+                WHEN A.EUR > 0 THEN 'EUR'
+                ELSE 'UNKNOWN' -- 만약 값이 없다면 기본 값 설정
+                END AS currencyCode,
+            ROUND(NVL(A.KRW, 0) +
+                  NVL(A.USD, 0) * (SELECT STANDARD_RATE FROM EXCHANGERATE WHERE CURRENCY_CODE = 'USD') +
+                  NVL(A.JPY, 0) * 0.01 *  (SELECT STANDARD_RATE FROM EXCHANGERATE WHERE CURRENCY_CODE = 'JPY') +
+                  NVL(A.CNY, 0) * (SELECT STANDARD_RATE FROM EXCHANGERATE WHERE CURRENCY_CODE = 'CNY') +
+                  NVL(A.EUR, 0) * (SELECT STANDARD_RATE FROM EXCHANGERATE WHERE CURRENCY_CODE = 'EUR'), 2) AS amountInKrw
+        FROM ACCOUNT A
+        WHERE A.ID = #{id}
+          AND (A.KRW > 0 OR A.USD > 0 OR A.JPY > 0 OR A.CNY > 0 OR A.EUR > 0)
+    </select>
+
+
+
+</mapper>

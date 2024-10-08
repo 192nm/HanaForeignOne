@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!-- MyBatis 전체 설정 -->
+
+    <!-- 로깅 설정 -->
+    <settings>
+        <!-- SQL 쿼리 로그를 출력할지 여부 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!-- CamelCase 자동 매핑 활성화 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <!-- 매퍼 설정: 매퍼 XML 파일을 지정 -->
+<!--    <mappers>-->
+<!--        <mapper resource="mapper/DayMapper.xml"/>-->
+<!--        &lt;!&ndash; 추가적인 매퍼 파일이 있을 경우 아래에 추가 &ndash;&gt;-->
+<!--        &lt;!&ndash; <mapper resource="mapper/AnotherMapper.xml"/> &ndash;&gt;-->
+<!--    </mappers>-->
+</configuration>

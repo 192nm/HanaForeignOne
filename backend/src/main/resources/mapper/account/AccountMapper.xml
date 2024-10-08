@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.account.mapper.AccountMapper">
+
+    <select id="accountSelectById" resultType="ac.kr.kopo.kopo_remittance.domain.account.dto.AccountSelectByIdDTO">
+        SELECT ACCOUNTNO, ACCOUNTTYPE, BANK
+        FROM ACCOUNT
+        WHERE ID = #{id}
+    </select>
+
+</mapper>

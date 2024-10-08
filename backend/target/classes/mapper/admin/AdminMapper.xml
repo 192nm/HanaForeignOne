@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.admin.mapper.AdminMapper">
+
+    <!-- 모든 거래 조회 -->
+    <select id="selectAllTransactions" resultType="ac.kr.kopo.kopo_remittance.domain.admin.dto.AdminDTO">
+        SELECT
+            tl.TRANSACTION_ID,
+            tl.ID,
+            tl.CURRENCY_CODE,
+            tl.TRANSACTION_DATE,
+            tl.AMOUNT,
+            tl.AMOUNT_IN_KRW,
+            tl.TRANSACTION_TYPE,
+            tl.RC_ACCOUNT,
+            tl.SD_ACCOUNT,
+            tl.TRAN_STATUS,
+            u.name AS senderName,
+            oa.RECIPIENT_NAME AS receiverName
+        FROM TRANSACTION_LOG tl
+                 LEFT JOIN account a ON tl.SD_ACCOUNT = a.accountNo
+                 LEFT JOIN userr u ON a.ID = u.ID
+                 LEFT JOIN overseasaccounts oa ON tl.RC_ACCOUNT = oa.account_number
+        WHERE tl.TRANSACTION_TYPE = '송금'
+        ORDER BY tl.TRANSACTION_DATE DESC
+    </select>
+
+    <!-- TRANSACTION_ID로 거래 조회 -->
+    <select id="selectTransactionById" parameterType="long" resultType="ac.kr.kopo.kopo_remittance.domain.admin.dto.AdminDTO">
+        SELECT
+            tl.TRANSACTION_ID,
+            tl.ID,
+            tl.CURRENCY_CODE,
+            tl.TRANSACTION_DATE,
+            tl.AMOUNT,
+            tl.AMOUNT_IN_KRW,
+            tl.TRANSACTION_TYPE,
+            tl.RC_ACCOUNT,
+            tl.SD_ACCOUNT,
+            tl.TRAN_STATUS,
+            u.name AS senderName,
+            oa.RECIPIENT_NAME AS receiverName
+        FROM TRANSACTION_LOG tl
+                 LEFT JOIN account a ON tl.SD_ACCOUNT = a.accountNo
+                 LEFT JOIN userr u ON a.ID = u.ID
+                 LEFT JOIN overseasaccounts oa ON tl.RC_ACCOUNT = oa.account_number
+        WHERE tl.TRANSACTION_ID = #{transactionId}
+    </select>
+
+    <!-- TRANSACTION_ID로 TRAN_STATUS 업데이트 -->
+    <update id="updateTransactionStatus">
+        UPDATE TRANSACTION_LOG
+        SET TRAN_STATUS = #{tranStatus}
+        WHERE TRANSACTION_ID = #{transactionId}
+    </update>
+
+</mapper>

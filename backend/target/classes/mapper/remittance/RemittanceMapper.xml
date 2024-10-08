@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.remittance.mapper.RemittanceMapper">
+
+    <!-- 외화를 바로 송금하는 메서드 -->
+    <update id="sendFx" parameterType="map">
+        <![CDATA[
+        DECLARE
+        v_remit_amount NUMBER;
+            v_sender_balance NUMBER;
+            v_deduct_amount NUMBER;
+            v_receiver_swift_code VARCHAR2(20);
+            v_receiver_account_number VARCHAR2(50);
+        BEGIN
+            -- 송금할 외화 금액 설정
+            v_remit_amount := #{amount};
+
+        -- 송금자의 해당 통화 잔액 조회
+        SELECT CASE
+                   WHEN #{currencyCode} = 'USD' THEN SUM(USD)
+                   WHEN #{currencyCode} = 'EUR' THEN SUM(EUR)
+                   WHEN #{currencyCode} = 'JPY' THEN SUM(JPY)
+                   WHEN #{currencyCode} = 'CNY' THEN SUM(CNY)
+                   ELSE 0
+                   END
+        INTO v_sender_balance
+        FROM ACCOUNT
+        WHERE ID = #{senderId};
+
+        -- 잔액 부족 시 예외 처리
+        IF v_sender_balance < v_remit_amount THEN
+                RAISE_APPLICATION_ERROR(-20001, '송금 통화의 잔액이 부족합니다.');
+        END IF;
+
+            -- 송금자의 외화 잔액 차감 로직
+        FOR rec IN (
+                SELECT ACCOUNTNO, USD, EUR, JPY, CNY
+                FROM ACCOUNT
+                WHERE ID = #{senderId}
+        AND CURRENCY_CODE = #{currencyCode}
+        AND ACCOUNTTYPE = '외화통장'
+        FOR UPDATE
+        ) LOOP
+        IF v_remit_amount <= 0 THEN
+        EXIT;
+        END IF;
+
+                v_deduct_amount := LEAST(v_remit_amount,
+                                         CASE
+                                             WHEN #{currencyCode} = 'USD' THEN rec.USD
+        WHEN #{currencyCode} = 'EUR' THEN rec.EUR
+        WHEN #{currencyCode} = 'JPY' THEN rec.JPY
+        WHEN #{currencyCode} = 'CNY' THEN rec.CNY
+        END);
+
+        -- 송금자의 외화 잔액 차감
+        UPDATE ACCOUNT
+        SET USD = CASE WHEN #{currencyCode} = 'USD' THEN USD - v_deduct_amount ELSE USD END,
+            EUR = CASE WHEN #{currencyCode} = 'EUR' THEN EUR - v_deduct_amount ELSE EUR END,
+            JPY = CASE WHEN #{currencyCode} = 'JPY' THEN JPY - v_deduct_amount ELSE JPY END,
+            CNY = CASE WHEN #{currencyCode} = 'CNY' THEN CNY - v_deduct_amount ELSE CNY END
+        WHERE ACCOUNTNO = rec.ACCOUNTNO;
+
+        v_remit_amount := v_remit_amount - v_deduct_amount;
+        END LOOP;
+
+            -- 수신자의 SWIFT 코드와 계좌 번호를 가져옴
+        SELECT SWIFT_CODE, ACCOUNT_NUMBER
+        INTO v_receiver_swift_code, v_receiver_account_number
+        FROM OVERSEASACCOUNTS
+        WHERE ACCOUNT_NUMBER = #{accountNumber}
+          AND SWIFT_CODE = #{swiftCode};
+
+        -- 수신자의 잔액에 송금 금액을 더함
+        UPDATE OVERSEASACCOUNTS
+        SET BALANCE = NVL(BALANCE, 0) + #{amount}
+        WHERE ACCOUNT_NUMBER = v_receiver_account_number
+          AND SWIFT_CODE = v_receiver_swift_code;
+
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20002, '수신자 계좌를 찾을 수 없습니다.');
+        WHEN TOO_MANY_ROWS THEN
+                RAISE_APPLICATION_ERROR(-20003, '수신자 계좌가 중복되었습니다.');
+        WHEN OTHERS THEN
+                RAISE;
+        END;
+        ]]>
+    </update>
+
+    <!-- KRW를 환전한 후 외화로 송금하는 메서드 -->
+    <update id="sendExchange" parameterType="map">
+        <![CDATA[
+        DECLARE
+        v_send_buy_rate NUMBER;
+            v_krw_amount NUMBER;
+            v_krw_balance NUMBER;
+            v_deduct_amount NUMBER;
+            v_receiver_swift_code VARCHAR2(20);
+            v_receiver_account_number VARCHAR2(50);
+            v_receiver_bank_code VARCHAR2(10);
+            senderId VARCHAR2(50) := #{senderId};  -- 송금자 ID
+        currencyCode VARCHAR2(3) := #{currencyCode};  -- 송금할 통화 코드
+        amount NUMBER := #{amount};               -- 송금할 금액
+        receiverAccountNumber VARCHAR2(50) := #{accountNumber};  -- 수신자 계좌번호
+        receiverSwiftCode VARCHAR2(20) := #{swiftCode};          -- 수신자 SWIFT 코드
+        receiverBankCode VARCHAR2(10) := #{bankCode};            -- 수신자 은행 코드
+        BEGIN
+            -- 환율 가져오기 (SEND_BUY_RATE 사용)
+        SELECT send_buy_rate INTO v_send_buy_rate
+        FROM EXCHANGERATE
+        WHERE currency_code = currencyCode;
+
+        -- JPY의 경우 100엔 단위로 환율 적용
+        IF currencyCode = 'JPY' THEN
+                v_send_buy_rate := v_send_buy_rate / 100;
+        END IF;
+
+            -- 외화 금액을 원화로 환산 (외화 -> KRW)
+            v_krw_amount := amount * v_send_buy_rate;
+
+            -- 송금자의 KRW 잔액 확인
+        SELECT SUM(KRW) INTO v_krw_balance
+        FROM ACCOUNT
+        WHERE ID = senderId;
+
+        -- 잔액 부족 시 예외 처리
+        IF v_krw_balance < v_krw_amount THEN
+                RAISE_APPLICATION_ERROR(-20001, 'KRW 잔액이 부족합니다.');
+        END IF;
+
+            -- 송금자의 KRW 잔액 차감
+        FOR rec IN (
+                SELECT ACCOUNTNO, KRW
+                FROM ACCOUNT
+                WHERE ID = senderId AND ACCOUNTTYPE = '입출금통장'
+                FOR UPDATE
+            ) LOOP
+                IF v_krw_amount <= 0 THEN
+                    EXIT;
+        END IF;
+
+                v_deduct_amount := LEAST(v_krw_amount, rec.KRW);
+
+                -- KRW 잔액 차감
+        UPDATE ACCOUNT
+        SET KRW = KRW - v_deduct_amount
+        WHERE ACCOUNTNO = rec.ACCOUNTNO;
+
+        v_krw_amount := v_krw_amount - v_deduct_amount;
+        END LOOP;
+
+            -- 수신자의 SWIFT 코드와 계좌 번호, 은행 코드를 가져옴
+        SELECT SWIFT_CODE, ACCOUNT_NUMBER, BANK_CODE
+        INTO v_receiver_swift_code, v_receiver_account_number, v_receiver_bank_code
+        FROM OVERSEASACCOUNTS
+        WHERE ACCOUNT_NUMBER = receiverAccountNumber
+          AND SWIFT_CODE = receiverSwiftCode
+          AND BANK_CODE = receiverBankCode;
+
+        -- 수신자의 잔액에 송금할 외화 금액을 더함 (외화 금액 amount)
+        UPDATE OVERSEASACCOUNTS
+        SET BALANCE = NVL(BALANCE, 0) + amount
+        WHERE ACCOUNT_NUMBER = v_receiver_account_number
+          AND SWIFT_CODE = v_receiver_swift_code
+          AND BANK_CODE = v_receiver_bank_code;
+
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20002, '수신자 계좌를 찾을 수 없습니다.');
+        WHEN TOO_MANY_ROWS THEN
+                RAISE_APPLICATION_ERROR(-20003, '수신자 계좌가 중복되었습니다.');
+        WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20004, '알 수 없는 오류가 발생했습니다: ' || SQLERRM);
+        END;
+        ]]>
+    </update>
+
+    <!-- STANDARD_RATE 조회 -->
+    <select id="getStandardRate" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT STANDARD_RATE
+        FROM EXCHANGERATE
+        WHERE CURRENCY_CODE = #{currencyCode}
+    </select>
+
+    <!-- KRW 계좌번호 조회 -->
+    <select id="getKRWAccountNumber" parameterType="String" resultType="String">
+        SELECT ACCOUNTNO
+        FROM ACCOUNT
+        WHERE ID = #{userId}
+          AND ACCOUNTTYPE = '입출금통장'
+          AND ROWNUM = 1
+    </select>
+
+    <!-- 외화 계좌번호 조회 -->
+    <select id="getForeignCurrencyAccountNumber" parameterType="map" resultType="String">
+        SELECT ACCOUNTNO
+        FROM ACCOUNT
+        WHERE ID = #{userId}
+          AND ACCOUNTTYPE = '외화통장'
+          AND CURRENCY_CODE = #{currencyCode}
+          AND ROWNUM = 1
+    </select>
+
+    <!-- 송금 거래 내역 삽입 -->
+    <insert id="insertRemittanceTransaction" parameterType="ac.kr.kopo.kopo_remittance.domain.remittance.dto.RemittanceTransactionDTO">
+        INSERT INTO TRANSACTION_LOG (
+            TRANSACTION_ID,
+            ID,
+            CURRENCY_CODE,
+            TRANSACTION_DATE,
+            AMOUNT,
+            AMOUNT_IN_KRW,
+            TRANSACTION_TYPE,
+            RC_ACCOUNT,
+            SD_ACCOUNT,
+            TRAN_STATUS
+        ) VALUES (
+                     SEQ_TRANSACTION_ID.NEXTVAL,
+                     #{id, jdbcType=VARCHAR},
+                     #{currencyCode},
+                     #{transactionDate},
+                     #{amount},
+                     #{amountInKrw},
+                     #{transactionType},
+                     #{rcAccount},
+                     #{sdAccount},
+                     #{tranStatus}
+                 )
+    </insert>
+
+    <!-- 송금 예약 삽입 -->
+    <insert id="insertRemittanceReservation" parameterType="ac.kr.kopo.kopo_remittance.domain.remittance.dto.RemittanceReservationDTO">
+        <selectKey keyProperty="reservationId" resultType="long" order="BEFORE">
+            SELECT seq_reservation_remi_id.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO reservation_remi (
+        reservation_id,
+        user_id,
+        amount,
+        currency_code,
+        target_rate,
+        receiver_account,
+        receiver_swift_code,
+        receiver_bank_code,
+        start_date,
+        end_date,
+        status,
+        remittance_type
+        ) VALUES (
+        #{reservationId},
+        #{userId},
+        #{amount},
+        #{currencyCode},
+        #{targetRate},
+        #{receiverAccount},
+        #{receiverSwiftCode},
+        #{receiverBankCode},
+        #{startDate},
+        #{endDate},
+        #{status},
+        #{remittanceType}
+        )
+    </insert>
+
+
+    <!-- 대기 중인 송금 예약 조회 -->
+    <select id="getPendingRemittanceReservations" resultType="ac.kr.kopo.kopo_remittance.domain.remittance.dto.RemittanceReservationDTO">
+        SELECT
+            reservation_id AS reservationId,
+            user_id AS userId,
+            amount,
+            currency_code AS currencyCode,
+            target_rate AS targetRate,
+            receiver_account AS receiverAccount,
+            receiver_swift_code AS receiverSwiftCode,
+            receiver_bank_code AS receiverBankCode,
+            start_date AS startDate,
+            end_date AS endDate,
+            status,
+            remittance_type AS remittanceType
+        FROM reservation_remi
+        WHERE status = 'PENDING'
+    </select>
+
+    <!-- 송금 예약 상태 업데이트 -->
+    <update id="updateRemittanceReservationStatus">
+        UPDATE reservation_remi
+        SET status = #{status}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
+    <!-- 사용자 이메일 조회 -->
+    <select id="getUserEmailById" parameterType="String" resultType="String">
+        SELECT email
+        FROM userr
+        WHERE id = #{userId}
+    </select>
+
+</mapper>

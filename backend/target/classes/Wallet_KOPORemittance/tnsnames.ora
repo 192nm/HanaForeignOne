@@ -1,0 +1,12 @@
+koporemittance_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g1912880a07439c_koporemittance_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+koporemittance_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g1912880a07439c_koporemittance_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+koporemittance_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g1912880a07439c_koporemittance_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+koporemittance_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g1912880a07439c_koporemittance_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+koporemittance_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g1912880a07439c_koporemittance_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+

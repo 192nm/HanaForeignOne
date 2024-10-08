@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.user.mapper.UserMapper">
+
+    <!-- Check if user exists -->
+    <select id="isUserExist" resultType="int" parameterType="String">
+        SELECT COUNT(*)
+        FROM "USERR"
+        WHERE "ID" = #{userId}
+    </select>
+
+    <!-- Insert new user (join) -->
+    <insert id="joinUser" parameterType="ac.kr.kopo.kopo_remittance.domain.user.entity.NoProfileEntity">
+        INSERT INTO "USERR" (user_no, id, pw, name, phone, email, engname, identifyno, address)
+        VALUES (USER_SEQ.NEXTVAL, #{id}, #{pw}, #{name}, #{phone}, #{email}, #{engName}, #{identifyNo}, #{address})
+    </insert>
+
+    <!-- User login -->
+    <select id="loginUser" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM "USERR"
+        WHERE "ID" = #{id}
+          AND "PW" = #{pw}
+    </select>
+
+    <select id="selectUserById" resultType="String" parameterType="String">
+        SELECT "NAME"
+        FROM "USERR"
+        WHERE "ID" = #{id}
+    </select>
+
+    <select id="getUserProfile" resultType="ac.kr.kopo.kopo_remittance.domain.user.entity.UserEntity" parameterType="String">
+        SELECT "USER_NO", "ID", "NAME", "PHONE", "EMAIL", "ENGNAME", "IDENTIFYNO", "ADDRESS", "PW", "PROFILE"
+        FROM "USERR"
+        WHERE "ID" = #{id}
+    </select>
+
+    <update id="updateUserProfile" parameterType="map">
+        UPDATE "USERR"
+        SET "PROFILE" = #{profile, jdbcType=BLOB}
+        WHERE "ID" = #{id}
+    </update>
+
+
+</mapper>

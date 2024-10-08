@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.docu.mapper.DocuMapper">
+
+    <insert id="insertDocu" parameterType="ac.kr.kopo.kopo_remittance.domain.docu.dto.DocuDTO">
+        INSERT INTO docu (DOCU_NO, ID,  EXTRACTED_TEXT)
+        VALUES (docu_no_seq.NEXTVAL, #{userId}, #{ocrText})
+    </insert>
+
+    <update id="updateDocu" parameterType="map">
+        UPDATE docu
+        SET ATTACHED_IMAGE = #{attachedImage, jdbcType=BLOB}
+        WHERE ID = #{id}
+    </update>
+
+    <select id="selectDocu" parameterType="String" resultType="ac.kr.kopo.kopo_remittance.domain.docu.dto.ImageDTO">
+        SELECT docu_no, id, attached_image, extracted_text
+        FROM docu
+        WHERE ID = #{id}
+    </select>
+
+</mapper>

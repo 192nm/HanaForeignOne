@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.kr.kopo.kopo_remittance.domain.exchange.mapper.ExchangeMapper">
+
+    <!-- 환전 로직을 수행하는 메서드 -->
+    <update id="krwToOther" parameterType="map">
+        <![CDATA[
+        DECLARE
+        v_send_buy_rate NUMBER;
+        v_required_krw
+        NUMBER;
+        v_krw_balance
+        NUMBER;
+        v_foreign_balance
+        NUMBER;
+        v_deduct_amount
+        NUMBER;
+        v_accountno
+        NUMBER;  -- ACCOUNTNO를 저장할 변수 선언
+        BEGIN
+            -- 병렬 DML 비활성화
+        EXECUTE IMMEDIATE 'ALTER SESSION DISABLE PARALLEL DML';
+
+        -- 환율 가져오기
+        SELECT send_buy_rate
+        INTO v_send_buy_rate
+        FROM ExchangeRATE
+        WHERE currency_code = #{currencyCode};
+
+        -- 필요한 KRW 금액 계산
+        v_required_krw
+        :=
+        #{amount}
+        *
+        v_send_buy_rate;
+
+        -- 사용자의 총 KRW 잔액 조회
+        SELECT SUM(KRW)
+        INTO v_krw_balance
+        FROM ACCOUNT
+        WHERE ID = #{userId};
+
+        IF
+        v_krw_balance < v_required_krw THEN
+                RAISE_APPLICATION_ERROR(-20001, 'KRW 잔액이 부족합니다.');
+        END IF;
+
+            -- KRW 잔액 차감 로직
+        FOR rec IN (
+                SELECT ACCOUNTNO, KRW, ACCOUNTTYPE
+                FROM ACCOUNT
+                WHERE ID =
+        #{userId}
+        AND
+        KRW
+        >
+        0
+        AND
+        ACCOUNTTYPE
+        =
+        '입출금통장' -- KRW 계좌만 선택
+        ORDER
+        BY
+        KRW
+        DESC
+        FOR
+        UPDATE
+        OF
+        KRW -- 행 잠금 추가
+        )
+        LOOP
+        IF
+        v_required_krw
+        <=
+        0
+        THEN
+        EXIT;
+        END IF;
+
+                v_deduct_amount
+        := LEAST(v_required_krw, rec.KRW);
+
+        UPDATE ACCOUNT
+        SET KRW = KRW - v_deduct_amount
+        WHERE ACCOUNTNO = rec.ACCOUNTNO;
+
+        v_required_krw
+        := v_required_krw - v_deduct_amount;
+        END LOOP;
+
+            IF
+        v_required_krw > 0 THEN
+                RAISE_APPLICATION_ERROR(-20001, 'KRW 잔액이 부족합니다.');
+        END IF;
+
+            -- 대상 통화 계좌의 ACCOUNTNO를 가져옴
+        SELECT ACCOUNTNO
+        INTO v_accountno
+        FROM ACCOUNT
+        WHERE ID = #{userId}
+          AND ACCOUNTTYPE = '외화통장'            -- 외화 통장만 선택
+          AND currency_code = #{currencyCode} -- currency_code 기반으로 정확한 통화 계좌 찾기
+          AND ROWNUM = 1
+            FOR UPDATE;
+        -- 행 잠금 추가
+
+        -- 대상 통화 계좌에 금액 추가
+        UPDATE ACCOUNT
+        SET USD = CASE WHEN #{currencyCode} = 'USD' THEN NVL(USD, 0) + #{amount} ELSE USD END,
+            EUR = CASE WHEN #{currencyCode} = 'EUR' THEN NVL(EUR, 0) + #{amount} ELSE EUR END,
+            JPY = CASE WHEN #{currencyCode} = 'JPY' THEN NVL(JPY, 0) + #{amount} ELSE JPY END,
+            CNY = CASE WHEN #{currencyCode} = 'CNY' THEN NVL(CNY, 0) + #{amount} ELSE CNY END
+        WHERE ACCOUNTNO = v_accountno;
+
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20002, '해당 통화의 계좌가 존재하지 않습니다.');
+        WHEN TOO_MANY_ROWS THEN
+                RAISE_APPLICATION_ERROR(-20003, '데이터가 중복되었습니다.');
+        WHEN OTHERS THEN
+                RAISE;
+        END;
+        ]]>
+    </update>
+
+
+    <update id="otherToKrw" parameterType="map">
+    <![CDATA[
+        DECLARE
+        v_receive_sell_rate NUMBER;
+        v_krw_amount
+        NUMBER;
+        v_foreign_balance
+        NUMBER;
+        v_deduct_amount
+        NUMBER;
+        v_accountno
+        NUMBER;  -- ACCOUNTNO를 저장할 변수 선언
+        v_initial_foreign_balance
+        NUMBER;  -- 요청 금액 보존 변수
+        BEGIN
+        -- 병렬 DML 비활성화
+        EXECUTE IMMEDIATE 'ALTER SESSION DISABLE PARALLEL DML';
+
+        -- 환율 가져오기 (판매 환율)
+        SELECT receive_sell_rate
+        INTO v_receive_sell_rate
+        FROM ExchangeRATE
+        WHERE currency_code = #{currencyCode};
+
+        -- 환전된 KRW 금액 계산 (외화 금액 * 환율)
+        v_krw_amount
+        :=
+        #{amount}
+        *
+        v_receive_sell_rate;
+
+        -- 사용자의 해당 통화 잔액 조회
+        SELECT CASE
+                   WHEN #{currencyCode} = 'USD' THEN SUM(USD)
+                   WHEN #{currencyCode} = 'EUR' THEN SUM(EUR)
+                   WHEN #{currencyCode} = 'JPY' THEN SUM(JPY)
+                   WHEN #{currencyCode} = 'CNY' THEN SUM(CNY)
+                   ELSE 0
+                   END
+        INTO v_foreign_balance
+        FROM ACCOUNT
+        WHERE ID = #{userId};
+
+        -- 입력된 금액보다 잔액이 부족한 경우 처리
+        IF
+        v_foreign_balance <
+        #{amount}
+        THEN
+        RAISE_APPLICATION_ERROR
+        (
+        -
+        20001,
+        '해당 통화 잔액이 부족합니다.'
+        );
+        END IF;
+
+        -- 요청 금액 보존
+        v_initial_foreign_balance
+        :=
+        #{amount};
+
+        -- 외화 계좌 잔액 차감 로직
+        FOR rec IN (
+            SELECT ACCOUNTNO, USD, EUR, JPY, CNY, ACCOUNTTYPE
+            FROM ACCOUNT
+            WHERE ID =
+        #{userId}
+        AND
+        currency_code
+        =
+        #{currencyCode}
+        AND
+        ACCOUNTTYPE
+        =
+        '외화통장'
+        ORDER
+        BY
+        USD
+        DESC,
+        EUR
+        DESC,
+        JPY
+        DESC,
+        CNY
+        DESC
+        FOR
+        UPDATE
+        )
+        LOOP
+        IF
+        v_initial_foreign_balance
+        <=
+        0
+        THEN
+        EXIT;
+        END IF;
+
+            v_deduct_amount
+        := LEAST(v_initial_foreign_balance,
+                                     CASE
+                                       WHEN
+        #{currencyCode}
+        =
+        'USD'
+        THEN
+        rec
+        .
+        USD
+        WHEN
+        #{currencyCode}
+        =
+        'EUR'
+        THEN
+        rec
+        .
+        EUR
+        WHEN
+        #{currencyCode}
+        =
+        'JPY'
+        THEN
+        rec
+        .
+        JPY
+        WHEN
+        #{currencyCode}
+        =
+        'CNY'
+        THEN
+        rec
+        .
+        CNY
+        END
+        );
+
+        -- 외화 잔액 차감
+        UPDATE ACCOUNT
+        SET USD = CASE WHEN #{currencyCode} = 'USD' THEN USD - v_deduct_amount ELSE USD END,
+            EUR = CASE WHEN #{currencyCode} = 'EUR' THEN EUR - v_deduct_amount ELSE EUR END,
+            JPY = CASE WHEN #{currencyCode} = 'JPY' THEN JPY - v_deduct_amount ELSE JPY END,
+            CNY = CASE WHEN #{currencyCode} = 'CNY' THEN CNY - v_deduct_amount ELSE CNY END
+        WHERE ACCOUNTNO = rec.ACCOUNTNO;
+
+        -- 차감된 금액을 요청 금액에서 뺌
+        v_initial_foreign_balance
+        := v_initial_foreign_balance - v_deduct_amount;
+        END LOOP;
+
+        -- 외화 잔액이 충분하지 않은 경우 처리
+        IF
+        v_initial_foreign_balance > 0 THEN
+            RAISE_APPLICATION_ERROR(-20001, '해당 통화 잔액이 부족합니다.');
+        END IF;
+
+        -- KRW 계좌의 ACCOUNTNO를 가져옴
+        SELECT ACCOUNTNO
+        INTO v_accountno
+        FROM ACCOUNT
+        WHERE ID = #{userId}
+          AND ACCOUNTTYPE = '입출금통장'
+          AND ROWNUM = 1
+            FOR UPDATE;
+        -- 행 잠금 추가
+
+        -- KRW 계좌에 환전된 금액 추가
+        UPDATE ACCOUNT
+        SET KRW = NVL(KRW, 0) + v_krw_amount
+        WHERE ACCOUNTNO = v_accountno;
+
+        EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20002, '해당 통화의 계좌가 존재하지 않습니다.');
+        WHEN TOO_MANY_ROWS THEN
+            RAISE_APPLICATION_ERROR(-20003, '데이터가 중복되었습니다.');
+        WHEN OTHERS THEN
+            RAISE;
+        END;
+        ]]>
+</update>
+
+
+    <!-- STANDARD_RATE 조회 -->
+    <select id="getStandardRate" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT STANDARD_RATE
+        FROM EXCHANGERATE
+        WHERE CURRENCY_CODE = #{currencyCode}
+    </select>
+
+    <!-- KRW 계좌번호 조회 -->
+    <select id="getKRWAccountNumber" parameterType="String" resultType="String">
+        SELECT ACCOUNTNO
+        FROM ACCOUNT
+        WHERE ID = #{userId}
+          AND ACCOUNTTYPE = '입출금통장'
+          AND ROWNUM = 1
+    </select>
+
+    <!-- 외화 계좌번호 조회 -->
+    <select id="getForeignCurrencyAccountNumber" parameterType="map" resultType="String">
+        SELECT ACCOUNTNO
+        FROM ACCOUNT
+        WHERE ID = #{userId}
+          AND ACCOUNTTYPE = '외화통장'
+          AND CURRENCY_CODE = #{currencyCode}
+          AND ROWNUM = 1
+    </select>
+
+    <!-- 거래 내역 삽입 -->
+    <insert id="insertTransaction" parameterType="ac.kr.kopo.kopo_remittance.domain.exchange.dto.TransactionDTO">
+        INSERT INTO TRANSACTION_LOG (TRANSACTION_ID,
+                                     ID,
+                                     CURRENCY_CODE,
+                                     TRANSACTION_DATE,
+                                     AMOUNT,
+                                     AMOUNT_IN_KRW,
+                                     TRANSACTION_TYPE,
+                                     RC_ACCOUNT,
+                                     SD_ACCOUNT,
+                                     TRAN_STATUS)
+        VALUES (SEQ_TRANSACTION_ID.NEXTVAL,
+                #{id, jdbcType=VARCHAR},
+                #{currencyCode},
+                #{transactionDate},
+                #{amount},
+                #{amountInKrw},
+                #{transactionType},
+                #{rcAccount},
+                #{sdAccount},
+                #{tranStatus})
+    </insert>
+
+
+    <!-- 예약 삽입 -->
+    <insert id="insertReservation" parameterType="ac.kr.kopo.kopo_remittance.domain.exchange.dto.ReservationDTO">
+        INSERT INTO reservation_fx (reservation_id,
+                                    user_id,
+                                    amount,
+                                    currency_code,
+                                    target_rate,
+                                    start_date,
+                                    end_date,
+                                    status,
+                                    exchange_direction)
+        VALUES (seq_reservation_id.NEXTVAL,
+                #{userId},
+                #{amount},
+                #{currencyCode},
+                #{targetRate},
+                #{startDate},
+                #{endDate},
+                #{status},
+                #{exchangeDirection})
+    </insert>
+
+    <!-- 대기 중인 예약 조회 -->
+    <select id="getPendingReservations" resultType="ac.kr.kopo.kopo_remittance.domain.exchange.dto.ReservationDTO">
+        SELECT reservation_id     AS reservationId,
+               user_id            AS userId,
+               amount,
+               currency_code      AS currencyCode,
+               target_rate        AS targetRate,
+               start_date         AS startDate,
+               end_date           AS endDate,
+               status,
+               exchange_direction AS exchangeDirection
+        FROM reservation_fx
+        WHERE status = 'PENDING'
+          AND end_date >= SYSDATE
+    </select>
+
+    <!-- 예약 상태 업데이트 -->
+    <update id="updateReservationStatus">
+        UPDATE reservation_fx
+        SET status = #{status}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
+    <!-- 만료된 예약 상태 업데이트 -->
+    <update id="expireReservations">
+    <![CDATA[
+        UPDATE reservation_fx
+        SET status = 'EXPIRED'
+        WHERE status = 'PENDING'
+          AND end_date < SYSDATE
+        ]]>
+</update>
+
+
+    <!-- 환율 정보 조회 -->
+    <select id="getSendBuyRate" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT send_buy_rate
+        FROM ExchangeRATE
+        WHERE CURRENCY_CODE = #{currencyCode}
+    </select>
+
+    <select id="getReceiveSellRate" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT receive_sell_rate
+        FROM ExchangeRATE
+        WHERE CURRENCY_CODE = #{currencyCode}
+    </select>
+
+    <select id="getUserEmailById" parameterType="String" resultType="String">
+        SELECT email
+        FROM userr
+        WHERE id = #{userId}
+    </select>
+
+    <!-- 만료된 예약 조회 -->
+    <select id="getExpiredReservations" resultType="ac.kr.kopo.kopo_remittance.domain.exchange.dto.ReservationDTO">
+        <![CDATA[
+        SELECT reservation_id     AS reservationId,
+               user_id            AS userId,
+               amount,
+               currency_code      AS currencyCode,
+               target_rate        AS targetRate,
+               start_date         AS startDate,
+               end_date           AS endDate,
+               status,
+               exchange_direction AS exchangeDirection
+        FROM reservation_fx
+        WHERE status = 'PENDING'
+          AND end_date < SYSDATE
+        ]]>
+    </select>
+
+
+</mapper>
